@@ -26,8 +26,8 @@ public class ConnectFour extends JFrame {
                 JButton button = new JButton(" ");
                 button.setName("Button" + i + j);
                 button.addActionListener(e -> {
-                    button.setText(this.player);
-                    player = "X".equals(player) ? "O" : "X";
+                    FreeRow(35, buttons);
+                  player = "X".equals(player) ? "O" : "X";
                 });
                 button.setFocusPainted(false);
                 panel.add(button);
@@ -36,10 +36,23 @@ public class ConnectFour extends JFrame {
         }
         add(panel);
 
-
     }
+    public void FreeRow(int begin, List<JButton> buttons) {
+            for (int k = begin; k >= 0 ; k -= 7) {
+                if (buttons.get(k).getText().equals(" ")) {
+                    buttons.get(k).setText(this.player);
+                    break;
+                }
+                if (k == 0 || k == 1 || k == 2 || k == 3 || k == 4 || k == 5) {
 
+                        begin ++;
+                        FreeRow(begin, buttons);
+
+                }
+            }
+    }
     public static void main(String[] args) {
         new ConnectFour();
     }
+
 }
