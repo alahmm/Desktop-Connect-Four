@@ -22,32 +22,34 @@ public class ConnectFour extends JFrame {
         List<JButton> buttons = new ArrayList<>();
         for (int j = 6; j >= 1 ; j--) {
         for (char i = 'A'; i <= 'G'; i++) {
-
                 JButton button = new JButton(" ");
                 button.setName("Button" + i + j);
-                button.addActionListener(e -> {
-                    FreeRow(35, buttons);
-                  player = "X".equals(player) ? "O" : "X";
-                });
                 button.setFocusPainted(false);
                 panel.add(button);
                 buttons.add(button);
             }
         }
+        for (int i = 35; i < 42; i++) {
+            Writer(i, buttons);
+        }
+
         add(panel);
 
+    }
+    public void Writer(int begin, List<JButton> buttons) {
+        for (int k = begin; k >= begin - 35 ; k -= 7) {
+            buttons.get(k).addActionListener(e -> {
+                FreeRow(begin, buttons);
+                player = "X".equals(player) ? "O" : "X";
+            });
+
+        }
     }
     public void FreeRow(int begin, List<JButton> buttons) {
             for (int k = begin; k >= 0 ; k -= 7) {
                 if (buttons.get(k).getText().equals(" ")) {
                     buttons.get(k).setText(this.player);
                     break;
-                }
-                if (k == 0 || k == 1 || k == 2 || k == 3 || k == 4 || k == 5) {
-
-                        begin ++;
-                        FreeRow(begin, buttons);
-
                 }
             }
     }
