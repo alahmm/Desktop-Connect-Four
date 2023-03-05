@@ -2,7 +2,6 @@ package four;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +31,6 @@ public class ConnectFour extends JFrame {
                 buttons.add(button);
             }
         }
-        for (int i = 35; i < 42; i++) {
-            Writer(i, buttons);
-        }
-
         JButton ButtonReset = new JButton("Reset");
         ButtonReset.setName("ButtonReset");
         JPanel panel2 = new JPanel(new BorderLayout());
@@ -45,21 +40,92 @@ public class ConnectFour extends JFrame {
 
         ButtonReset.addActionListener(e -> {
             for (JButton button : buttons
-                 ) {
+            ) {
                 button.setText(" ");
+                player = "X";
                 button.setBackground(Color.LIGHT_GRAY);
+                button.setEnabled(true);
+
             }
         });
+        for (int i = 35; i < 42; i++) {
 
+            Writer(i, buttons);
+        }
     }
     public void Writer(int begin, List<JButton> buttons) {
         for (int k = begin; k >= begin - 35 ; k -= 7) {
             buttons.get(k).addActionListener(e -> {
                 FreeRow(begin, buttons);
-                player = "X".equals(player) ? "O" : "X";
             });
 
         }
+    }
+    public void FreeRow(int begin, List<JButton> buttons) {
+        for (int k = begin; k >= 0 ; k -= 7) {
+            if (buttons.get(k).getText().equals(" ")) {
+                buttons.get(k).setText(this.player);
+                if (IsWinner(this.player, buttons)) {
+                    for (JButton button : buttons
+                    ) {
+                        button.setEnabled(false);
+                    }
+                }
+                player = "X".equals(player) ? "O" : "X";
+                break;
+            }
+        }
+
+    }
+    public static boolean IsWinner(String var, List<JButton> buttons) {
+        String[][] matrix = ArrayToMatrixConverter(buttons);
+        boolean isWin = false;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (i >= 3) {
+                    if (Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i - 1][j], var) &&
+                            Objects.equals(matrix[i - 2][j], var) && Objects.equals(matrix[i - 3][j], var)){
+                        buttons.get(j + i * 7).setBackground(Color.BLUE);
+                        buttons.get(j + (i - 1) * 7).setBackground(Color.BLUE);
+                        buttons.get(j + (i - 2) * 7).setBackground(Color.BLUE);
+                        buttons.get(j + (i - 3) * 7).setBackground(Color.BLUE);
+                        isWin = true;
+                    }
+                }
+                if (i >= 3 && j >= 3) {
+                    if ((Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i - 1][j - 1], var) &&
+                                    Objects.equals(matrix[i - 2][j - 2], var) && Objects.equals(matrix[i - 3][j - 3], var)))
+                    {
+                        buttons.get(j + i * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 1) + (i - 1) * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 2) + (i - 2) * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 3) + (i - 3) * 7).setBackground(Color.BLUE);
+                        isWin = true;
+                    } else if (Objects.equals(matrix[i - 3][j], var) && Objects.equals(matrix[i - 2][j - 1], var) &&
+                                Objects.equals(matrix[i - 1][j - 2], var) && Objects.equals(matrix[i][j - 3], var)) {
+                        buttons.get(j + (i - 3) * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 1) + (i - 2) * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 2) + (i - 1) * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 3) + i * 7).setBackground(Color.BLUE);
+                        isWin = true;
+
+
+                        }
+                }
+                if (j >= 3) {
+                    if (Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i][j - 1], var) &&
+                            Objects.equals(matrix[i][j - 2], var) && Objects.equals(matrix[i][j - 3], var)){
+                        buttons.get(j + i * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 1) + i * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 2) + i * 7).setBackground(Color.BLUE);
+                        buttons.get((j - 3) + i * 7).setBackground(Color.BLUE);
+                        isWin = true;
+
+                    }
+                }
+            }
+        }
+        return isWin;
     }
     public static String[][] ArrayToMatrixConverter(List<JButton> array) {
         String[][] matrix = new String[6][7];
@@ -70,54 +136,7 @@ public class ConnectFour extends JFrame {
         }
         return matrix;
     }
-    public static boolean IsWinner(String var, List<JButton> buttons) {
-        String[][] matrix = ArrayToMatrixConverter(buttons);
-        boolean isWin = false;
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (i >= 3) {
-                    if (Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i - 1][j], var) &&
-                            Objects.equals(matrix[i - 2][j], var) && Objects.equals(matrix[i - 3][j], var)){
-                        isWin = true;
 
-                    }
-                }
-                if (i >= 3 && j >= 3) {
-                    if ((Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i - 1][j - 1], var) &&
-                                    Objects.equals(matrix[i - 2][j - 2], var) && Objects.equals(matrix[i - 3][j - 3], var))
-                    || (Objects.equals(matrix[i - 3][j], var) && Objects.equals(matrix[i - 2][j - 1], var) &&
-                            Objects.equals(matrix[i - 1][j - 2], var) && Objects.equals(matrix[i][j - 3], var))) {
-                        isWin = true;
-
-                    }
-                }
-                if (j >= 3) {
-                    if (Objects.equals(matrix[i][j], var) && Objects.equals(matrix[i][j - 1], var) &&
-                            Objects.equals(matrix[i][j - 2], var) && Objects.equals(matrix[i][j - 3], var)){
-                        isWin = true;
-
-                    }
-                }
-            }
-        }
-        return isWin;
-    }
-    public void FreeRow(int begin, List<JButton> buttons) {
-            for (int k = begin; k >= 0 ; k -= 7) {
-                if (buttons.get(k).getText().equals(" ")) {
-                    buttons.get(k).setText(this.player);
-                    if (IsWinner(this.player, buttons)) {
-                        for (JButton button : buttons
-                        ) {
-                            button.setBackground(Color.BLUE);
-                            button.setEnabled(false);
-                        }
-                    }
-                    break;
-                }
-            }
-
-    }
     public static void main(String[] args) {
         new ConnectFour();
     }
